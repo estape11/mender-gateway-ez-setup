@@ -1,0 +1,82 @@
+#!/bin/bash
+
+set -e
+
+STATE="$1"
+FILES_DIR="$2"
+
+# Number of files in the payload
+FILES_IN_PAYLOAD=2
+
+# Location of the device key and certificate
+DEVICE_KEY="/data/mender/mender-cert-private.pem"
+DEVICE_CERT="/data/mender/mender-cert.pem"
+# CA not affected
+
+# Backup location for rollback
+BACKUP_DIR="/var/lib/mender/mender-cert-updater-backup"
+
+# New key and cert will be in the files dir
+NEW_KEY="$FILES_DIR/mender-cert-private.pem"
+NEW_CERT="$FILES_DIR/mender-cert.pem"
+
+# Reboot flag
+REBOOT_FLAG="/data/mender/reboot_flag"
+
+case "$STATE" in
+    Download)
+        echo "Starting certificates download..." 1>&2
+        
+        # device-private.key      
+        file="$(cat stream-next)"
+        cat "$file" > $NEW_KEY
+
+        # device-cert.pem      
+        file="$(cat stream-next)"
+        cat "$file" > $NEW_CERT
+
+        if [ "$(cat stream-next)" != "" ]; then
+            echo "More than" $FILES_IN_PAYLOAD "files in payload" 1>&2
+            exit 1
+        fi
+        ;;
+
+    ArtifactInstall)
+        # Backup the current key and certificate
+        mkdir -p "$BACKUP_DIR"
+        cp "$DEVICE_KEY" "$BACKUP_DIR/"
+        cp "$DEVICE_CERT" "$BACKUP_DIR/"
+
+        # Install the new key and certificate
+        cp -f "$NEW_KEY" "$DEVICE_KEY"
+        cp -f "$NEW_CERT" "$DEVICE_CERT"
+
+        # Set the reboot flag to restart the Mender services
+        echo true > "$REBOOT_FLAG"
+        ;;
+
+    NeedsArtifactReboot)
+        echo "No"
+        ;;
+
+    SupportsRollback)
+        echo "Yes"
+        ;;
+
+    ArtifactCommit)
+        # The new certificate is working, so we can remove the backup
+        rm -rf "$BACKUP_DIR"
+        ;;
+
+    ArtifactRollback)
+        # Something went wrong, so we need to restore the old key and certificate
+        if [ -d "$BACKUP_DIR" ]; then
+            cp "$BACKUP_DIR/mender-cert-private.pem" "$DEVICE_KEY"
+            cp "$BACKUP_DIR/mender-cert.pem" "$DEVICE_CERT"
+            rm -rf "$BACKUP_DIR"
+        fi
+        ;;
+
+esac
+
+exit 0

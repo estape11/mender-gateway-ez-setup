@@ -1,0 +1,13 @@
+#!/bin/bash
+
+FILE_TO_CHECK="/data/mender/reboot_flag"
+
+echo "Checking if the Mender services needed to restart..." 1>&1
+
+if [ -f "$FILE_TO_CHECK" ] && grep -q "true" "$FILE_TO_CHECK"; then
+    echo "Restarting..." 1>&1
+    systemctl restart mender-authd mender-updated mender-connect
+    rm -f $FILE_TO_CHECK
+fi
+
+exit 0
