@@ -1,0 +1,9 @@
+*.crt
+*.srl
+*.key
+*.pem
+*pem*
+*.conf
+hosts
+*.req
+*.mender
