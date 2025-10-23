@@ -8,3 +8,5 @@ hosts
 *.req
 *.mender
 *.env
+*.req*
+*.key*

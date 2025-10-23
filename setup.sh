@@ -30,11 +30,11 @@ export UPSTREAM_SERVER_URL=""
 export TENANT_TOKEN=""
 
 # Set the docker registry configuration and credentials
-export DOCKER_REGISTRY_URL=""
+export DOCKER_REGISTRY_URL="registry.mender.io"
 export DOCKER_REGISTRY_USERNAME=""
 export DOCKER_REGISTRY_PASSWORD=""
 
 # The name and version of the mtls server container
 # The defaults have been set, you rarely need to change this.
-export MENDER_GATEWAY_IMAGE="${DOCKER_REGISTRY_URL}/mendersoftware/mender-gateway:saas-v2024.08.19"
+export MENDER_GATEWAY_IMAGE="${DOCKER_REGISTRY_URL}/mendersoftware/mender-gateway:2.0.0"
 
