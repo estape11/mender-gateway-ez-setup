@@ -12,6 +12,8 @@ It's a shell script that handles the installation, commit, and rollback of the n
 
 You need to place the `mender-cert-updater` script on your device in the `/usr/share/mender/modules/v3/` directory.
 
+And, you need to place the `Sync_Leave_00_Restart` script on your device in the `/etc/mender/scripts/` directory.
+
 ### 3. Generate a new Key and Certificate
 
 On your workstation, you need to generate a new private key and a certificate signing request (CSR). Then you will sign the CSR with your Certificate Authority (CA).
