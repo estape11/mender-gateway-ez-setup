@@ -15,7 +15,7 @@ This repository provides a set of scripts to set up and run a [Mender Gateway](h
     The `setup.sh` script configures the necessary environment variables. You need to edit this file and provide your Mender account details, including your username, password, and tenant token.
 
     ```bash
-    ./setup.sh
+    source ./setup.sh
     ```
 
 2.  **Generate Certificates:**

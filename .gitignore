@@ -7,3 +7,4 @@
 hosts
 *.req
 *.mender
+*.env
